@@ -2,8 +2,8 @@ const presence = new Presence({
 		clientId: "705139844883677224",
 	}),
 	strings = presence.getStrings({
-		paused: "presence.playback.paused",
-		playing: "presence.playback.playing",
+		paused: "general.paused",
+		playing: "general.playing",
 	}),
 	browsingTimestamp = Math.floor(Date.now() / 1000);
 
@@ -21,7 +21,11 @@ function getTimestamps(videoTime: number, videoDuration: number): number[] {
 }
 
 presence.on("UpdateData", async () => {
-	const presenceData: PresenceData = { largeImageKey: "pvid" };
+	const presenceData: PresenceData = {
+		type: ActivityType.Watching,
+		largeImageKey:
+			"https://cdn.rcd.gg/PreMiD/websites/P/Prime%20Video/assets/logo.png",
+	};
 	presenceData.startTimestamp = browsingTimestamp;
 	const title: string =
 			document.querySelector(
@@ -59,7 +63,7 @@ presence.on("UpdateData", async () => {
 				presenceData.state = subtitle.textContent;
 
 			if (video.paused) {
-				presenceData.smallImageKey = "paused";
+				presenceData.smallImageKey = Assets.Pause;
 				presenceData.smallImageText = (await strings).paused;
 				delete presenceData.startTimestamp;
 			} else {
@@ -69,13 +73,13 @@ presence.on("UpdateData", async () => {
 				);
 				presenceData.startTimestamp = startTimestamp;
 				presenceData.endTimestamp = endTimestamp;
-				presenceData.smallImageKey = "playing";
+				presenceData.smallImageKey = Assets.Play;
 				presenceData.smallImageText = (await strings).playing;
 			}
 		} else if (video && !video.className.includes("tst")) {
 			if (title2 !== "") presenceData.details = title2;
 			if (video.paused) {
-				presenceData.smallImageKey = "paused";
+				presenceData.smallImageKey = Assets.Pause;
 				presenceData.smallImageText = (await strings).paused;
 				delete presenceData.startTimestamp;
 			} else {
@@ -85,7 +89,7 @@ presence.on("UpdateData", async () => {
 				);
 				presenceData.startTimestamp = startTimestamp;
 				presenceData.endTimestamp = endTimestamp;
-				presenceData.smallImageKey = "playing";
+				presenceData.smallImageKey = Assets.Play;
 				presenceData.smallImageText = (await strings).playing;
 			}
 		} else if (title2) {
@@ -113,7 +117,7 @@ presence.on("UpdateData", async () => {
 			.querySelector(".av-refine-bar-summaries")
 			.textContent.split(/["„]/)[1]
 			.split(/[”"]/);
-		presenceData.smallImageKey = "search";
+		presenceData.smallImageKey = Assets.Search;
 	}
 
 	if (presenceData.details) presence.setActivity(presenceData);

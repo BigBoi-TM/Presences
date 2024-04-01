@@ -2,13 +2,17 @@ const presence = new Presence({
 		clientId: "684570342085099546",
 	}),
 	strings = presence.getStrings({
-		browse: "presence.activity.browsing",
+		browse: "general.browsing",
 	}),
 	getElement = (query: string): string => {
 		const element = document.querySelector(query);
 		if (element) return element.textContent.replace(/^\s+|\s+$/g, "");
 		else return;
 	};
+
+const enum Assets {
+	Logo = "https://cdn.rcd.gg/PreMiD/websites/B/Board%20Game%20Online/assets/logo.png",
+}
 
 function setObject(path: string) {
 	switch (path) {
@@ -104,7 +108,7 @@ function setObject(path: string) {
 
 presence.on("UpdateData", async () => {
 	const presenceData: PresenceData = {
-			largeImageKey: "boardgameonline",
+			largeImageKey: Assets.Logo,
 		},
 		path = location.pathname,
 		query = location.search,
@@ -141,8 +145,8 @@ presence.on("UpdateData", async () => {
 	}
 
 	if (presenceData.details) {
-		if (presenceData.details.match("(Browsing|Viewing)")) {
-			presenceData.smallImageKey = "reading";
+		if ((presenceData.details as string).match("(Browsing|Viewing)")) {
+			presenceData.smallImageKey = Assets.Reading;
 			presenceData.smallImageText = (await strings).browse;
 		}
 		presence.setActivity(presenceData);

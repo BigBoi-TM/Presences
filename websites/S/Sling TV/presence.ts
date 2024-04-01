@@ -2,10 +2,10 @@ const presence = new Presence({
 		clientId: "764916517895798796",
 	}),
 	strings = presence.getStrings({
-		play: "presence.playback.playing",
-		pause: "presence.playback.paused",
-		live: "presence.activity.live",
-		search: "presence.activity.searching",
+		play: "general.playing",
+		pause: "general.paused",
+		live: "general.live",
+		search: "general.searching",
 	});
 
 /**
@@ -34,7 +34,8 @@ presence.on("UpdateData", async () => {
 		presenceData: PresenceData = {
 			details,
 			state,
-			largeImageKey: "slingtv",
+			largeImageKey:
+				"https://cdn.rcd.gg/PreMiD/websites/S/Sling%20TV/assets/logo.png",
 			smallImageKey,
 			smallImageText,
 			startTimestamp,
@@ -61,10 +62,10 @@ presence.on("UpdateData", async () => {
 			if (title) presenceData.state = getStateText(video.paused, live);
 
 			presenceData.smallImageKey = live
-				? "live"
+				? Assets.Live
 				: video.paused
-				? "pause"
-				: "play";
+				? Assets.Pause
+				: Assets.Play;
 			presenceData.smallImageText = live
 				? (await strings).live
 				: video.paused

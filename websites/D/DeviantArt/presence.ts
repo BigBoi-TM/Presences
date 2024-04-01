@@ -7,7 +7,8 @@ let currentURL = new URL(document.location.href),
 const browsingTimestamp = Math.floor(Date.now() / 1000);
 let presenceData: PresenceData = {
 	details: "Viewing an unsupported page",
-	largeImageKey: "lg",
+	largeImageKey:
+		"https://cdn.rcd.gg/PreMiD/websites/D/DeviantArt/assets/logo.png",
 	startTimestamp: browsingTimestamp,
 };
 const updateCallback = {
@@ -28,7 +29,8 @@ const updateCallback = {
 	resetData = (
 		defaultData: PresenceData = {
 			details: "Viewing an unsupported page",
-			largeImageKey: "lg",
+			largeImageKey:
+				"https://cdn.rcd.gg/PreMiD/websites/D/DeviantArt/assets/logo.png",
 			startTimestamp: browsingTimestamp,
 		}
 	): void => {
@@ -227,7 +229,7 @@ const updateCallback = {
 										presenceData.details = "Viewing deviations";
 										presenceData.state = currentPath
 											.slice(1)
-											.concat(getURLParam("order") ? getURLParam("order") : [])
+											.concat(getURLParam("order") ?? [])
 											.join(" > ")
 											.trim()
 											.replaceAll("-", " ")
@@ -240,11 +242,10 @@ const updateCallback = {
 									}
 									case "daily-deviations": {
 										presenceData.details = "Viewing daily deviations";
-										presenceData.state = (
-											document.querySelector(
+										presenceData.state =
+											document.querySelector<HTMLSelectElement>(
 												"#daily-deviation-picker"
-											) as HTMLSelectElement
-										).textContent;
+											).textContent;
 
 										break;
 									}

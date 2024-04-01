@@ -2,14 +2,15 @@ const presence: Presence = new Presence({
 		clientId: "632479205707350037",
 	}),
 	strings = presence.getStrings({
-		play: "presence.playback.playing",
-		pause: "presence.playback.paused",
+		play: "general.playing",
+		pause: "general.paused",
 	}),
 	startTimestamp = Math.floor(Date.now() / 1000);
 
 presence.on("UpdateData", async () => {
 	const presenceData: PresenceData = {
-			largeImageKey: "large_img",
+			largeImageKey:
+				"https://cdn.rcd.gg/PreMiD/websites/J/JioCinema/assets/logo.png",
 			startTimestamp,
 		},
 		url = window.location.href;
@@ -17,8 +18,9 @@ presence.on("UpdateData", async () => {
 		const [video] = document.querySelectorAll("video");
 		presenceData.details =
 			document.querySelectorAll(".meta-data-title")[0].textContent;
-		presenceData.largeImageKey = "large_img";
-		presenceData.smallImageKey = video.paused ? "pause" : "play";
+		presenceData.largeImageKey =
+			"https://cdn.rcd.gg/PreMiD/websites/J/JioCinema/assets/logo.png";
+		presenceData.smallImageKey = video.paused ? Assets.Pause : Assets.Play;
 		presenceData.smallImageText = video.paused
 			? (await strings).pause
 			: (await strings).play;
@@ -43,7 +45,7 @@ presence.on("UpdateData", async () => {
 		}
 	} else if (url.includes("/search/")) {
 		presenceData.details = "Searching...";
-		presenceData.smallImageKey = "search";
+		presenceData.smallImageKey = Assets.Search;
 	} else presenceData.details = "Browsing";
 
 	presence.setActivity(presenceData, true);

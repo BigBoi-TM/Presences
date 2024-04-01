@@ -28,8 +28,11 @@ let strings: Awaited<ReturnType<typeof getStrings>>,
 	oldLang: string = null;
 
 presence.on("UpdateData", async () => {
-	const presenceData: PresenceData = { largeImageKey: "logo" },
-		newLang = await presence.getSetting<string>("lang");
+	const presenceData: PresenceData = {
+			largeImageKey:
+				"https://cdn.rcd.gg/PreMiD/websites/L/Lolz.guru/assets/logo.jpg",
+		},
+		newLang = await presence.getSetting<string>("lang").catch(() => "en");
 
 	if (oldLang !== newLang || !strings) {
 		oldLang = newLang;

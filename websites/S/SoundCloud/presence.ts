@@ -112,14 +112,23 @@ const statics = {
 
 presence.on("UpdateData", async () => {
 	const path = location.pathname.replace(/\/?$/, "/"),
-		[showBrowsing, showSong, showTimestamps, cover, newLang] =
-			await Promise.all([
-				presence.getSetting<boolean>("browse"),
-				presence.getSetting<boolean>("song"),
-				presence.getSetting<boolean>("timestamp"),
-				presence.getSetting<boolean>("cover"),
-				presence.getSetting<string>("lang").catch(() => "en"),
-			]),
+		[
+			showBrowsing,
+			showSong,
+			hidePaused,
+			showTimestamps,
+			showCover,
+			showButtons,
+			newLang,
+		] = await Promise.all([
+			presence.getSetting<boolean>("browse"),
+			presence.getSetting<boolean>("song"),
+			presence.getSetting<boolean>("hidePaused"),
+			presence.getSetting<boolean>("timestamp"),
+			presence.getSetting<boolean>("cover"),
+			presence.getSetting<boolean>("buttons"),
+			presence.getSetting<string>("lang").catch(() => "en"),
+		]),
 		playing = Boolean(document.querySelector(".playControls__play.playing"));
 
 	if (oldLang !== newLang || !strings) {
@@ -127,8 +136,13 @@ presence.on("UpdateData", async () => {
 		strings = await getStrings();
 	}
 
+	if (showSong && hidePaused && !playing && !showBrowsing)
+		return presence.clearActivity();
+
 	let presenceData: PresenceData = {
-		largeImageKey: "soundcloud",
+		type: ActivityType.Listening,
+		largeImageKey:
+			"https://cdn.rcd.gg/PreMiD/websites/S/SoundCloud/assets/logo.png",
 		startTimestamp: elapsed,
 	};
 
@@ -175,7 +189,7 @@ presence.on("UpdateData", async () => {
 		presenceData.startTimestamp = startTimestamp;
 		presenceData.endTimestamp = endTimestamp;
 
-		if (cover) {
+		if (showCover) {
 			presenceData.largeImageKey =
 				document
 					.querySelector<HTMLSpanElement>(
@@ -184,15 +198,17 @@ presence.on("UpdateData", async () => {
 					.style.backgroundImage.match(/"(.*)"/)?.[1]
 					.replace("-t50x50.jpg", "-t500x500.jpg") ?? "soundcloud";
 		}
-		presenceData.smallImageKey = playing ? "play" : "pause";
+		presenceData.smallImageKey = playing ? Assets.Play : Assets.Pause;
 		presenceData.smallImageText = strings[playing ? "play" : "pause"];
 
-		presenceData.buttons = [
-			{
-				label: strings.listen,
-				url: `https://soundcloud.com${pathLinkSong}`,
-			},
-		];
+		if (showButtons) {
+			presenceData.buttons = [
+				{
+					label: strings.listen,
+					url: `https://soundcloud.com${pathLinkSong}`,
+				},
+			];
+		}
 	}
 
 	if ((!playing || !showSong) && showBrowsing) {
@@ -257,15 +273,15 @@ presence.on("UpdateData", async () => {
 		}
 	}
 
-	if (presenceData.details) {
+	if (presenceData.details && typeof presenceData.details === "string") {
 		if (presenceData.details.match("(Browsing|Viewing|Discovering)")) {
-			presenceData.smallImageKey = "reading";
+			presenceData.smallImageKey = Assets.Reading;
 			presenceData.smallImageText = strings.browse;
 		} else if (presenceData.details.match("(Searching)")) {
-			presenceData.smallImageKey = "search";
+			presenceData.smallImageKey = Assets.Search;
 			presenceData.smallImageText = strings.search;
 		} else if (presenceData.details.match("(Uploading)")) {
-			presenceData.smallImageKey = "uploading";
+			presenceData.smallImageKey = Assets.Uploading;
 			presenceData.smallImageText = "Uploading..."; // no string available
 		} else if (!showTimestamps || (!playing && !showBrowsing)) {
 			delete presenceData.startTimestamp;

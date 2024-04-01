@@ -1,6 +1,7 @@
 const presence = new Presence({
 	clientId: "715045665796915250",
 });
+
 function NotFound(): boolean {
 	const q = document.querySelector("#content>div>div>h1");
 	if (window.location.pathname === "/404") return true;
@@ -308,7 +309,7 @@ presence.on("UpdateData", async () => {
 		if (await presence.getSetting<boolean>(SettingsId.showAnimeName))
 			presenceData.state = animeName ? animeName.textContent : "...";
 		else {
-			presenceData.details = presenceData.details.replace(":", "");
+			presenceData.details = (presenceData.details as string).replace(":", "");
 			delete presenceData.smallImageText;
 		}
 	} else if (

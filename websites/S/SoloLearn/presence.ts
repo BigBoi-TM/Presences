@@ -2,7 +2,7 @@ const presence = new Presence({
 		clientId: "668173626775830529",
 	}),
 	strings = presence.getStrings({
-		browsing: "presence.activity.browsing",
+		browsing: "general.browsing",
 	}),
 	getElement = (query: string): string | undefined =>
 		document.querySelector(query)?.textContent.trimStart().trimEnd(),
@@ -56,7 +56,8 @@ presence.on("UpdateData", async () => {
 		showTimestamps = await presence.getSetting<boolean>("timestamp");
 
 	let presenceData: PresenceData = {
-		largeImageKey: "sololearn",
+		largeImageKey:
+			"https://cdn.rcd.gg/PreMiD/websites/S/SoloLearn/assets/logo.png",
 		startTimestamp: elapsed,
 	};
 
@@ -132,8 +133,8 @@ presence.on("UpdateData", async () => {
 	}
 
 	if (presenceData.details) {
-		if (presenceData.details.match("(Browsing|Viewing)")) {
-			presenceData.smallImageKey = "reading";
+		if ((presenceData.details as string).match("(Browsing|Viewing)")) {
+			presenceData.smallImageKey = Assets.Reading;
 			presenceData.smallImageText = (await strings).browsing;
 		}
 		if (!showTimestamps) {

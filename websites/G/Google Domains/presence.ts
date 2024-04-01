@@ -2,8 +2,8 @@ const presence = new Presence({
 		clientId: "735878480318955660",
 	}),
 	strings = presence.getStrings({
-		browse: "presence.activity.browsing",
-		search: "presence.activity.searching",
+		browse: "general.browsing",
+		search: "general.searching",
 	}),
 	getElement = (query: string): string | undefined => {
 		return document.querySelector(query)?.textContent.trim();
@@ -26,7 +26,8 @@ presence.on("UpdateData", async () => {
 		showTimestamps = await presence.getSetting<boolean>("timestamp");
 
 	let presenceData: PresenceData = {
-		largeImageKey: "googledomains",
+		largeImageKey:
+			"https://cdn.rcd.gg/PreMiD/websites/G/Google%20Domains/assets/logo.jpg",
 		startTimestamp: elapsed,
 	};
 
@@ -68,13 +69,13 @@ presence.on("UpdateData", async () => {
 		presenceData.state = getElement(".mat-tab-label-active");
 	}
 
-	if (presenceData.details) {
+	if (presenceData.details && typeof presenceData.details === "string") {
 		if (presenceData.details.match("(Browsing|Viewing)")) {
-			presenceData.smallImageKey = "reading";
+			presenceData.smallImageKey = Assets.Reading;
 			presenceData.smallImageText = (await strings).browse;
 		}
 		if (presenceData.details.match("(Searching)")) {
-			presenceData.smallImageKey = "search";
+			presenceData.smallImageKey = Assets.Search;
 			presenceData.smallImageText = (await strings).search;
 		}
 		if (!showTimestamps) {

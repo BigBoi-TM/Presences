@@ -2,9 +2,9 @@ const presence = new Presence({
 		clientId: "609220157910286346",
 	}),
 	strings = presence.getStrings({
-		play: "presence.playback.playing",
-		pause: "presence.playback.paused",
-		live: "presence.activity.live",
+		play: "general.playing",
+		pause: "general.paused",
+		live: "general.live",
 	});
 
 function getTimesec(
@@ -72,8 +72,9 @@ presence.on("UpdateData", async () => {
 					presenceData: PresenceData = {
 						details: document.querySelector(".VideoTitle").textContent,
 						state: `${owner} - ${location.pathname.match(/..\d+$/)[0]}`,
-						largeImageKey: "niconico",
-						smallImageKey: isPlaying ? "play" : "pause",
+						largeImageKey:
+							"https://cdn.rcd.gg/PreMiD/websites/N/niconico/assets/logo.png",
+						smallImageKey: isPlaying ? Assets.Play : Assets.Pause,
 						smallImageText: isPlaying
 							? (await strings).play
 							: (await strings).pause,
@@ -103,8 +104,9 @@ presence.on("UpdateData", async () => {
 							document.querySelector("[class^='___group-name-anchor___']")
 						).textContent
 					} - ${location.pathname.match(/lv\d+/)[0]}`,
-					largeImageKey: "niconico",
-					smallImageKey: "live",
+					largeImageKey:
+						"https://cdn.rcd.gg/PreMiD/websites/N/niconico/assets/logo.png",
+					smallImageKey: Assets.Live,
 					smallImageText: (await strings).live,
 					startTimestamp:
 						Math.floor(Date.now() / 1000) -
@@ -123,7 +125,8 @@ presence.on("UpdateData", async () => {
 
 		case "seiga.nicovideo.jp": {
 			const presenceData: PresenceData = {
-				largeImageKey: "niconico",
+				largeImageKey:
+					"https://cdn.rcd.gg/PreMiD/websites/N/niconico/assets/logo.png",
 			};
 			if (location.pathname.startsWith("/seiga/im")) {
 				presenceData.details = document.querySelector(".title").textContent;

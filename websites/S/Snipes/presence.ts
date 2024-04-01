@@ -3,9 +3,25 @@ const presence = new Presence({
 	}),
 	browsingTimestamp = Math.floor(Date.now() / 1000);
 
+const enum Assets {
+	Logo = "https://cdn.rcd.gg/PreMiD/websites/S/Snipes/assets/logo.png",
+}
+
+const assets = {
+	fr: "https://cdn.rcd.gg/PreMiD/websites/S/Snipes/assets/0.png",
+	at: "https://cdn.rcd.gg/PreMiD/websites/S/Snipes/assets/1.png",
+	es: "https://cdn.rcd.gg/PreMiD/websites/S/Snipes/assets/2.png",
+	nl: "https://cdn.rcd.gg/PreMiD/websites/S/Snipes/assets/3.png",
+	it: "https://cdn.rcd.gg/PreMiD/websites/S/Snipes/assets/4.png",
+	be: "https://cdn.rcd.gg/PreMiD/websites/S/Snipes/assets/5.png",
+	ch: "https://cdn.rcd.gg/PreMiD/websites/S/Snipes/assets/6.png",
+	usa: "https://cdn.rcd.gg/PreMiD/websites/S/Snipes/assets/7.png",
+	de: "https://cdn.rcd.gg/PreMiD/websites/S/Snipes/assets/8.png",
+};
+
 presence.on("UpdateData", async function () {
 	const presenceData: PresenceData = {
-			largeImageKey: "logo",
+			largeImageKey: Assets.Logo,
 		},
 		setTimeElapsed = await presence.getSetting<boolean>("timeElapsed"),
 		setShowButtons = await presence.getSetting<boolean>("showButtons"),
@@ -43,29 +59,45 @@ presence.on("UpdateData", async function () {
 			];
 		}
 
-		if (urlpath[num] === "new") presenceData.details = "New";
-		else if (urlpath[num] === "shoes") presenceData.details = "Shoes";
-		else if (urlpath[num] === "clothing") presenceData.details = "Clothing";
-		else if (urlpath[num] === "accessories")
-			presenceData.details = "Accessoires";
-		else if (urlpath[urlpNum + 2] === "brands") {
-			presenceData.details = "Brands";
-			if (urlpath[urlpNum + 3]) {
-				presenceData.state = document.querySelector(
-					"li.b-breadcrumb-item>span.b-breadcrumb-text"
-				).textContent;
+		switch (urlpath[num]) {
+			case "new": {
+				presenceData.details = "New";
+				break;
 			}
-		} else if (urlpath[urlpNum + 2] === "sale") presenceData.details = "Sale";
-		else if (urlpath[urlpNum + 2] === "deals") presenceData.details = "Deals";
-		else if (urlpath[urlpNum + 2] === "musthaves")
-			presenceData.details = "Must haves";
-		else if (
-			document.querySelector("li.b-breadcrumb-item>span.b-breadcrumb-text")
-		) {
-			presenceData.details = "Category:";
-			presenceData.state = document.querySelector(
-				"li.b-breadcrumb-item>span.b-breadcrumb-text"
-			).textContent;
+			case "shoes": {
+				presenceData.details = "Shoes";
+				break;
+			}
+			case "clothing": {
+				presenceData.details = "Clothing";
+				break;
+			}
+			case "accessories": {
+				presenceData.details = "Accessoires";
+				break;
+			}
+			default:
+				if (urlpath[urlpNum + 2] === "brands") {
+					presenceData.details = "Brands";
+					if (urlpath[urlpNum + 3]) {
+						presenceData.state = document.querySelector(
+							"li.b-breadcrumb-item>span.b-breadcrumb-text"
+						).textContent;
+					}
+				} else if (urlpath[urlpNum + 2] === "sale")
+					presenceData.details = "Sale";
+				else if (urlpath[urlpNum + 2] === "deals")
+					presenceData.details = "Deals";
+				else if (urlpath[urlpNum + 2] === "musthaves")
+					presenceData.details = "Must haves";
+				else if (
+					document.querySelector("li.b-breadcrumb-item>span.b-breadcrumb-text")
+				) {
+					presenceData.details = "Category:";
+					presenceData.state = document.querySelector(
+						"li.b-breadcrumb-item>span.b-breadcrumb-text"
+					).textContent;
+				}
 		}
 	} else if (urlpath[urlpNum + 1] === "p") {
 		const brand = document.querySelector("div.js-target>a").textContent;
@@ -137,7 +169,7 @@ presence.on("UpdateData", async function () {
 				document.location.hostname === "www.snipesusa.com" ? "usa" : "de";
 		}
 
-		presenceData.smallImageKey = smallimage;
+		presenceData.smallImageKey = assets[smallimage as keyof typeof assets];
 		presenceData.smallImageText = `SNIPES ${smallimage.toUpperCase()}`;
 	}
 

@@ -16,14 +16,19 @@ const presence = new Presence({
 		clientId: "707389880505860156",
 	}),
 	strings = presence.getStrings({
-		playing: "presence.playback.playing",
-		paused: "presence.playback.paused",
-		browsing: "presence.activity.browsing",
-		searching: "presence.activity.searching",
-		episode: "presence.media.info.episode",
+		playing: "general.playing",
+		paused: "general.paused",
+		browsing: "general.browsing",
+		episode: "general.viewEpisode",
 	});
 let video: VideoContext = null,
 	lastVideoOption = 1;
+
+const enum Assets {
+	Season = "https://cdn.rcd.gg/PreMiD/websites/M/Monos%20Chinos/assets/0.png",
+	Directory = "https://cdn.rcd.gg/PreMiD/websites/M/Monos%20Chinos/assets/1.png",
+	Logo = "https://cdn.rcd.gg/PreMiD/websites/M/Monos%20Chinos/assets/logo.png",
+}
 
 presence.on("iFrameData", async (context: VideoContext) => {
 	video = context;
@@ -31,43 +36,54 @@ presence.on("iFrameData", async (context: VideoContext) => {
 
 presence.on("UpdateData", async () => {
 	const presenceData: PresenceData = {
-			largeImageKey: "logo",
+			largeImageKey: Assets.Logo,
 		},
 		browsingData: PresenceData = {
-			largeImageKey: "logo",
+			largeImageKey: Assets.Logo,
 			details: (await strings).browsing,
-			smallImageKey: "browsing",
+			smallImageKey: Assets.Viewing,
 			smallImageText: (await strings).browsing,
 		},
 		actions: PageAction[] = [
 			{
 				id: "episode",
-				path: "/ver",
+				path: "/ver/",
 				text: (await strings).playing,
 			},
 			{
 				id: "seasonList",
 				path: "/emision",
 				text: "viendo lista de emisión",
-				icon: "season",
+				icon: Assets.Season,
 			},
 			{
 				id: "directory",
 				path: "/animes",
 				text: "viendo el directorio",
-				icon: "directory",
+				icon: Assets.Directory,
+			},
+			{
+				id: "seasonCalendar",
+				path: "/calendario",
+				text: "viendo el calendario",
+				icon: Assets.Season,
 			},
 			{
 				id: "directoryAnime",
 				path: "/anime/",
 				text: "viendo lista de episodios",
-				icon: "directory",
+				icon: Assets.Directory,
 			},
 			{
 				id: "search",
-				path: "/search",
-				text: (await strings).searching,
-				icon: "search",
+				path: "/buscar",
+				text: "buscando animes:",
+				icon: Assets.Search,
+			},
+			{
+				id: "profile",
+				path: "/mi-perfil",
+				text: "Viendo perfil",
 			},
 		];
 	let action: PageAction = null;
@@ -82,8 +98,9 @@ presence.on("UpdateData", async () => {
 	if (action === null) Object.assign(presenceData, browsingData);
 	else if (action.id === "episode") {
 		const detailsMatch = document
-			.querySelector(".Title-epi")
-			.textContent.match(/^([^\d]+).* (\d+).+$/);
+			.querySelector(".heromain_h1")
+			.textContent.replace(/- /gm, "")
+			.match(/^([^\d]+)(\d+)/);
 
 		if (!detailsMatch) return presence.setActivity(browsingData);
 
@@ -91,8 +108,8 @@ presence.on("UpdateData", async () => {
 
 		Object.assign(presenceData, {
 			details: title,
-			state: (await strings).episode.replace("{0}", episode),
-			smallImageKey: "browsing",
+			state: `${(await strings).episode} ${episode}`,
+			smallImageKey: Assets.Viewing,
 			smallImageText: "viendo el capitulo",
 		});
 
@@ -121,7 +138,7 @@ presence.on("UpdateData", async () => {
 		);
 
 		Object.assign(presenceData, {
-			smallImageKey: video.paused ? "paused" : "playing",
+			smallImageKey: video.paused ? Assets.Pause : Assets.Play,
 			smallImageText: (await strings)[video.paused ? "paused" : "playing"],
 		} as PresenceData);
 
@@ -134,9 +151,30 @@ presence.on("UpdateData", async () => {
 	} else {
 		if (
 			document.location.pathname.includes("/anime/") &&
-			document.querySelector("h1.Title")
-		)
-			presenceData.state = document.querySelector("h1.Title").textContent;
+			document.querySelector("div.chapterdetails h1")
+		) {
+			presenceData.state = document.querySelector(
+				"div.chapterdetails h1"
+			).textContent;
+		}
+
+		if (
+			document.location.pathname.includes("/buscar") &&
+			document.querySelector("div.heroarea h1 span")
+		) {
+			presenceData.state = document.querySelector(
+				"div.heroarea h1 span"
+			).textContent;
+		}
+
+		if (
+			document.location.pathname.includes("/mi-perfil") &&
+			document.querySelector("div.profile div.promain h1")
+		) {
+			presenceData.state = document.querySelector(
+				"div.profile div.promain h1"
+			).textContent;
+		}
 
 		Object.assign(presenceData, {
 			details: action.text,

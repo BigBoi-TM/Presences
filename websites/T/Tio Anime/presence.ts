@@ -18,7 +18,8 @@ presence.on(
 
 presence.on("UpdateData", async () => {
 	const presenceData: PresenceData = {
-			largeImageKey: "tioanimelogo",
+			largeImageKey:
+				"https://cdn.rcd.gg/PreMiD/websites/T/Tio%20Anime/assets/logo.png",
 			startTimestamp: browsingTimestamp,
 		},
 		privacy = await presence.getSetting<boolean>("privacy"),
@@ -60,7 +61,7 @@ presence.on("UpdateData", async () => {
 					Math.floor(video.currentTime),
 					Math.floor(video.duration)
 				);
-			presenceData.smallImageKey = video.paused ? "stop" : "play";
+			presenceData.smallImageKey = video.paused ? Assets.Stop : Assets.Play;
 			presenceData.smallImageText = video.paused
 				? "Capítulo pausado"
 				: "Reproduciendo capítulo";
@@ -70,7 +71,7 @@ presence.on("UpdateData", async () => {
 			}
 		} else {
 			presenceData.details = "Viendo anime";
-			presenceData.smallImageKey = video.paused ? "stop" : "play";
+			presenceData.smallImageKey = video.paused ? Assets.Stop : Assets.Play;
 			presenceData.smallImageText = video.paused
 				? "Capítulo pausado"
 				: "Reproduciendo capítulo";

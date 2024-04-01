@@ -2,6 +2,7 @@ const presence = new Presence({
 		clientId: "809133308604055622",
 	}),
 	browsingTimestamp = Math.floor(Date.now() / 1000);
+
 async function getStrings() {
 	return presence.getStrings(
 		{
@@ -19,7 +20,7 @@ async function getStrings() {
 			viewAlbum: "genius.viewAlbum",
 			buttonAlbum: "general.buttonViewAlbum",
 		},
-		await presence.getSetting<string>("lang")
+		await presence.getSetting<string>("lang").catch(() => "en")
 	);
 }
 
@@ -27,7 +28,7 @@ let strings: Awaited<ReturnType<typeof getStrings>>,
 	oldLang: string = null;
 
 presence.on("UpdateData", async () => {
-	const newLang = await presence.getSetting<string>("lang"),
+	const newLang = await presence.getSetting<string>("lang").catch(() => "en"),
 		buttons = await presence.getSetting<boolean>("buttons");
 
 	if (oldLang !== newLang || !strings) {
@@ -36,34 +37,35 @@ presence.on("UpdateData", async () => {
 	}
 
 	const presenceData: PresenceData = {
-			largeImageKey: "genius",
+			largeImageKey:
+				"https://cdn.rcd.gg/PreMiD/websites/G/Genius/assets/logo.png",
 			startTimestamp: browsingTimestamp,
 		},
 		path = document.location.pathname;
 
-	if (path === "/") presenceData.details = (await strings).home;
+	if (path === "/") presenceData.details = strings.home;
 	else if (path.startsWith("/a/")) {
 		let article = document.querySelector("h1.article_title").textContent;
 		if (article.length > 128) article = `${article.substring(0, 125)}...`;
 
-		presenceData.details = (await strings).article;
+		presenceData.details = strings.article;
 		presenceData.state = article;
-		presenceData.smallImageKey = "reading";
-		presenceData.smallImageText = (await strings).reading;
+		presenceData.smallImageKey = Assets.Reading;
+		presenceData.smallImageText = strings.reading;
 	} else if (path.startsWith("/artists/")) {
-		presenceData.details = (await strings).profile;
+		presenceData.details = strings.profile;
 		[presenceData.state] = document
 			.querySelector("h1.profile_identity-name_iq_and_role_icon")
 			.textContent.split("<");
 	} else if (path.startsWith("/albums/")) {
-		presenceData.details = (await strings).viewAlbum;
+		presenceData.details = strings.viewAlbum;
 		presenceData.state = document.querySelector(
 			"h1.header_with_cover_art-primary_info-title"
 		).textContent;
 		if (buttons) {
 			presenceData.buttons = [
 				{
-					label: (await strings).buttonAlbum,
+					label: strings.buttonAlbum,
 					url: document.URL,
 				},
 			];
@@ -72,26 +74,29 @@ presence.on("UpdateData", async () => {
 		document.querySelector("div[class*='SongPageGrid']") !== null ||
 		document.querySelector(".song_body-lyrics") !== null
 	) {
-		presenceData.details = (await strings).lyrics;
+		presenceData.details = strings.lyrics;
 		presenceData.state = `${
 			document
-				.querySelector("a[class*='SongHeader__Artist']")
+				.querySelector("a[class*='SongHeaderdesktop__Artist']")
 				?.textContent.trim() ||
 			document
-				.querySelector("a.header_with_cover_art-primary_info-primary_artist")
+				.querySelector("a[class*='SongHeadermobile__Artist']")
+				?.textContent.trim() ||
+			document
+				.querySelector("a[class*='HeaderArtistAndTracklistdesktop__Artist']")
 				?.textContent.trim()
 		} - ${
 			document
-				.querySelector("h1[class*='SongHeader__Title-sc']")
+				.querySelector('h1[class*="SongHeaderdesktop__Title"]')
 				?.textContent.trim() ||
 			document
-				.querySelector("h1.header_with_cover_art-primary_info-title")
+				.querySelector('h1[class*="SongHeadermobile__Title"]')
 				?.textContent.trim()
 		}`;
 		if (buttons) {
 			presenceData.buttons = [
 				{
-					label: (await strings).viewLyrics,
+					label: strings.viewLyrics,
 					url: document.URL,
 				},
 			];
@@ -99,7 +104,7 @@ presence.on("UpdateData", async () => {
 	} else if (
 		document.querySelector(".profile_identity-name_iq_and_role_icon") !== null
 	) {
-		presenceData.details = (await strings).profile;
+		presenceData.details = strings.profile;
 		[presenceData.state] = document
 			.querySelector("h1.profile_identity-name_iq_and_role_icon")
 			.textContent.split("<");
@@ -108,16 +113,14 @@ presence.on("UpdateData", async () => {
 		let title = document.querySelector("h1.article_title").textContent;
 		if (title.length > 128) title = `${title.substring(0, 125)}...`;
 
-		presenceData.details = (await strings).watch;
+		presenceData.details = strings.watch;
 		presenceData.state = title;
 		if (video && !isNaN(video.duration)) {
 			[presenceData.startTimestamp, presenceData.endTimestamp] =
 				presence.getTimestampsfromMedia(video);
 
-			presenceData.smallImageKey = video.paused ? "pause" : "play";
-			presenceData.smallImageText = video.paused
-				? (await strings).pause
-				: (await strings).play;
+			presenceData.smallImageKey = video.paused ? Assets.Pause : Assets.Play;
+			presenceData.smallImageText = video.paused ? strings.pause : strings.play;
 
 			if (video.paused) {
 				delete presenceData.startTimestamp;
@@ -125,12 +128,12 @@ presence.on("UpdateData", async () => {
 			}
 		}
 	} else if (path.startsWith("/search")) {
-		presenceData.details = (await strings).search;
+		presenceData.details = strings.search;
 		presenceData.state = document.querySelector(
 			"h2.search_results_page-header"
 		).textContent;
-		presenceData.smallImageKey = "search";
-		presenceData.smallImageText = (await strings).searching;
+		presenceData.smallImageKey = Assets.Search;
+		presenceData.smallImageText = strings.searching;
 	}
 
 	if (presenceData.details) presence.setActivity(presenceData);

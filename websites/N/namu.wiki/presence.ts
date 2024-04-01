@@ -97,14 +97,17 @@ presence.on("UpdateData", async () => {
 		params = document.location.search,
 		[, action] = path.split("/"),
 		details = boardTypeMapping[action],
-		presenceData: PresenceData = { largeImageKey: "namu" };
+		presenceData: PresenceData = {
+			largeImageKey:
+				"https://cdn.rcd.gg/PreMiD/websites/N/namu.wiki/assets/logo.png",
+		};
 
 	/**
 	 *
 	 * Setting Details & State
 	 *
 	 */
-	presenceData.details = !details ? "Unknown Action" : details;
+	presenceData.details = details ?? "Unknown Action";
 
 	let page: RegExpExecArray | string = validateContributeUrl.exec(path);
 	/* View Contribute */
@@ -168,7 +171,8 @@ presence.on("UpdateData", async () => {
 			"#app > div > div > nav > ul > li > div > div > div"
 		);
 		if (!members[1].textContent.includes("Please login!")) {
-			presenceData.smallImageKey = "user";
+			presenceData.smallImageKey =
+				"https://cdn.rcd.gg/PreMiD/websites/N/namu.wiki/assets/0.png";
 			if (!privacy) presenceData.smallImageText = members[0].textContent;
 		}
 	}

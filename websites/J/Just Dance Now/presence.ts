@@ -10,12 +10,15 @@ presence.on("UpdateData", async () => {
 			presence.getSetting<boolean>("roomCode"),
 		]),
 		presenceData: PresenceData = {
-			largeImageKey: "logo",
+			largeImageKey:
+				"https://cdn.rcd.gg/PreMiD/websites/J/Just%20Dance%20Now/assets/logo.png",
 			startTimestamp: browsingStamp,
 		};
 
-	if (document.querySelector("html").className.includes("vip"))
-		presenceData.smallImageKey = "vip";
+	if (document.querySelector("html").className.includes("vip")) {
+		presenceData.smallImageKey =
+			"https://cdn.rcd.gg/PreMiD/websites/J/Just%20Dance%20Now/assets/0.png";
+	}
 	presenceData.smallImageText = "VIP";
 	if (document.querySelector("div.logo"))
 		presenceData.details = "Viewing Homepage";

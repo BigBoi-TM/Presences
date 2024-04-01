@@ -1,6 +1,10 @@
 const presence = new Presence({
 	clientId: "806539630878261328",
 });
+
+const enum Assets {
+	Logo = "https://cdn.rcd.gg/PreMiD/websites/A/Animelon/assets/logo.png",
+}
 async function getStrings() {
 	return presence.getStrings(
 		{
@@ -9,7 +13,7 @@ async function getStrings() {
 			viewSeries: "general.buttonViewSeries",
 			watchEpisode: "general.buttonViewEpisode",
 		},
-		await presence.getSetting<string>("lang")
+		await presence.getSetting<string>("lang").catch(() => "en")
 	);
 }
 
@@ -47,12 +51,12 @@ presence.on(
 
 presence.on("UpdateData", async () => {
 	const presenceData: PresenceData = {
-			largeImageKey: "animelon",
+			largeImageKey: Assets.Logo,
 			startTimestamp: browsingTimestamp,
 		},
 		[buttons, newLang] = await Promise.all([
 			presence.getSetting<boolean>("buttons"),
-			presence.getSetting<string>("lang"),
+			presence.getSetting<string>("lang").catch(() => "en"),
 		]);
 
 	if (oldLang !== newLang || !strings) {
@@ -62,7 +66,7 @@ presence.on("UpdateData", async () => {
 
 	if (document.location.pathname.includes("/video/")) {
 		if (playback === true && !isNaN(duration)) {
-			presenceData.smallImageKey = paused ? "pause" : "play";
+			presenceData.smallImageKey = paused ? Assets.Pause : Assets.Play;
 			presenceData.smallImageText = paused ? strings.pause : strings.play;
 			[presenceData.startTimestamp, presenceData.endTimestamp] =
 				presence.getTimestamps(Math.floor(currentTime), Math.floor(duration));

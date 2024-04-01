@@ -38,7 +38,8 @@ let strings: Awaited<ReturnType<typeof getStrings>>;
 
 presence.on("UpdateData", async () => {
 	const presenceData: PresenceData = {
-			largeImageKey: "logo",
+			largeImageKey:
+				"https://cdn.rcd.gg/PreMiD/websites/T/TwitCasting/assets/logo.png",
 			startTimestamp: elapsed,
 		},
 		[
@@ -65,7 +66,7 @@ presence.on("UpdateData", async () => {
 		{ pathname, search, href } = document.location,
 		title = document
 			.querySelector<HTMLSpanElement>(
-				":is(#movie_title_content, .tw-player-page__title-editor-value)"
+				":is(#movie_title_content, .tw-player-page-title-title)"
 			)
 			?.innerText.split("\n")[0],
 		channelName =
@@ -84,7 +85,7 @@ presence.on("UpdateData", async () => {
 	}
 
 	if (new URLSearchParams(search).has("genre")) {
-		presenceData.smallImageKey = "reading";
+		presenceData.smallImageKey = Assets.Reading;
 		presenceData.smallImageText = strings.browsing;
 		presenceData.details = strings.viewCategory;
 		if (!privacy) {
@@ -102,7 +103,7 @@ presence.on("UpdateData", async () => {
 				.textContent.split(":")[1]
 				.trim();
 		}
-		presenceData.smallImageKey = "search";
+		presenceData.smallImageKey = Assets.Search;
 		presenceData.smallImageText = strings.search;
 	} else if (pathname.includes("/broadcaster"))
 		presenceData.details = strings.dashboardManage;
@@ -130,7 +131,7 @@ presence.on("UpdateData", async () => {
 					{ label: strings.buttonWatchStream, url: document.URL },
 				];
 			}
-			presenceData.smallImageKey = "live";
+			presenceData.smallImageKey = Assets.Live;
 			presenceData.smallImageText = strings.live;
 		} else if (pathname.includes("/movie")) {
 			if (privacy) presenceData.details = strings.watchingVid;
@@ -153,7 +154,7 @@ presence.on("UpdateData", async () => {
 						Date.now() / 1000 + duration - currentTime;
 				}
 
-				presenceData.smallImageKey = paused ? "pause" : "play";
+				presenceData.smallImageKey = paused ? Assets.Pause : Assets.Play;
 				presenceData.smallImageText = paused ? strings.paused : strings.playing;
 				presenceData.buttons = [
 					{ label: strings.buttonWatchVideo, url: document.URL },

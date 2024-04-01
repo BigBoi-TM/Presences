@@ -3,136 +3,225 @@ const presence = new Presence({
 	}),
 	browsingTimestamp = Math.floor(Date.now() / 1000);
 
-interface Maps {
-	city: boolean;
-	id: number;
-	map: string;
-	largeImageKey: string;
-	pvlargeImageKey: string | null;
-	smallImageKey: string;
+const enum Assets {
+	EmblemMondstadt = "https://cdn.rcd.gg/PreMiD/websites/G/Genshin%20Impact%20Map/assets/1.png",
+	EmblemLiyue = "https://cdn.rcd.gg/PreMiD/websites/G/Genshin%20Impact%20Map/assets/2.png",
+	EmblemInazuma = "https://cdn.rcd.gg/PreMiD/websites/G/Genshin%20Impact%20Map/assets/3.png",
+	EmblemUnknown = "https://cdn.rcd.gg/PreMiD/websites/G/Genshin%20Impact%20Map/assets/4.png",
+	EnkanomiyaMap = "https://cdn.rcd.gg/PreMiD/websites/G/Genshin%20Impact%20Map/assets/5.png",
+	TeyvatMap = "https://cdn.rcd.gg/PreMiD/websites/G/Genshin%20Impact%20Map/assets/6.png",
+	TheChasmUndergroundMinesMap = "https://cdn.rcd.gg/PreMiD/websites/G/Genshin%20Impact%20Map/assets/7.png",
+	EmblemEnkanomiya = "https://cdn.rcd.gg/PreMiD/websites/G/Genshin%20Impact%20Map/assets/8.png",
+	EmblemThechasm = "https://cdn.rcd.gg/PreMiD/websites/G/Genshin%20Impact%20Map/assets/9.png",
+	PreviewMondstadt = "https://cdn.rcd.gg/PreMiD/websites/G/Genshin%20Impact%20Map/assets/10.png",
+	PreviewLiyue = "https://cdn.rcd.gg/PreMiD/websites/G/Genshin%20Impact%20Map/assets/11.png",
+	PreviewTenshukaku = "https://cdn.rcd.gg/PreMiD/websites/G/Genshin%20Impact%20Map/assets/12.png",
+	PreviewTheChasmUndergroundMines = "https://cdn.rcd.gg/PreMiD/websites/G/Genshin%20Impact%20Map/assets/13.png",
+	PreviewGoldenAppleArchipelago28 = "https://cdn.rcd.gg/PreMiD/websites/G/Genshin%20Impact%20Map/assets/14.png",
+	GoldenAppleArchipelagoMap28 = "https://cdn.rcd.gg/PreMiD/websites/G/Genshin%20Impact%20Map/assets/15.png",
+	PreviewEnkanomiya = "https://cdn.rcd.gg/PreMiD/websites/G/Genshin%20Impact%20Map/assets/16.png",
+	EmblemIsles = "https://cdn.rcd.gg/PreMiD/websites/G/Genshin%20Impact%20Map/assets/17.png",
+	EmblemSumeru = "https://cdn.rcd.gg/PreMiD/websites/G/Genshin%20Impact%20Map/assets/18.png",
+	PreviewSumeru = "https://cdn.rcd.gg/PreMiD/websites/G/Genshin%20Impact%20Map/assets/19.png",
+	PreviewSumeru2 = "https://cdn.rcd.gg/PreMiD/websites/G/Genshin%20Impact%20Map/assets/0.png",
+	Logo = "https://cdn.rcd.gg/PreMiD/websites/G/Genshin%20Impact%20Map/assets/logo.png",
 }
 
-interface City {
-	position?: number;
+interface Maps extends Image {
+	id: number;
 	map: string;
-	largeImageKey: string;
-	smallImageKey: string;
+	key?: string[];
+	city?: boolean;
+	starting?: number;
+	ending?: number;
+}
+
+interface City extends Image {
+	position: number;
+	map: string;
+}
+
+interface Image {
+	image: {
+		small: string;
+		default: string;
+		preview?: string | string[];
+	};
 }
 
 const map: Maps[] = [
 		{
-			city: true,
 			id: 2,
 			map: "Teyvat",
-			largeImageKey: "teyvat_map",
-			pvlargeImageKey: "teyvat_map",
-			smallImageKey: "emblem_unknown",
+			city: true,
+			image: {
+				small: Assets.EmblemUnknown,
+				default: Assets.TeyvatMap,
+				preview: Assets.TeyvatMap,
+			},
 		},
 		{
-			city: false,
 			id: 7,
 			map: "Enkanomiya",
-			largeImageKey: "enkanomiya_map",
-			pvlargeImageKey: "preview_enkanomiya",
-			smallImageKey: "emblem_enkanomiya",
+			image: {
+				small: Assets.EmblemEnkanomiya,
+				default: Assets.EnkanomiyaMap,
+				preview: Assets.PreviewEnkanomiya,
+			},
 		},
 		{
-			city: false,
 			id: 9,
 			map: "The Chasm: Underground Mines",
-			largeImageKey: "the_chasm_underground_mines_map",
-			pvlargeImageKey: "preview_the_chasm_underground_mines",
-			smallImageKey: "emblem_thechasm",
+			key: ["chasm", "the-chasm-underground"],
+			image: {
+				small: Assets.EmblemThechasm,
+				default: Assets.TheChasmUndergroundMinesMap,
+				preview: Assets.PreviewTheChasmUndergroundMines,
+			},
 		},
 		{
-			city: false,
+			// Event map 2.8
+			// https://www.hoyolab.com/article/5958494/
+			id: 12,
+			map: "Golden Apple Archipelago",
+			key: ["isles", "golden-apple-archipelago-2-8"],
+			image: {
+				small: Assets.EmblemIsles,
+				default: Assets.GoldenAppleArchipelagoMap28,
+				preview: Assets.PreviewGoldenAppleArchipelago28,
+			},
+			starting: 1657854000, // Fri, 15 Jul 2022 03:00 GMT
+			ending: 1661295600, // Wed, 24 Aug 2022 23:00 GMT
+		},
+		{
 			id: 0,
 			map: "Unknown",
-			largeImageKey: "unknown_map",
-			pvlargeImageKey: null,
-			smallImageKey: "emblem_unknown",
+			image: {
+				small: Assets.EmblemUnknown,
+				default: Assets.EmblemUnknown,
+			},
 		},
 	],
 	city: City[] = [
 		{
 			position: 1200,
 			map: "Mondstadt",
-			largeImageKey: "preview_mondstadt",
-			smallImageKey: "emblem_mondstadt",
+			image: {
+				small: Assets.EmblemMondstadt,
+				default: Assets.PreviewMondstadt,
+				preview: Assets.PreviewMondstadt,
+			},
 		},
 		{
-			position: 4000,
+			position: 2500,
 			map: "Liyue",
-			largeImageKey: "preview_liyue",
-			smallImageKey: "emblem_liyue",
+			image: {
+				small: Assets.EmblemLiyue,
+				default: Assets.PreviewLiyue,
+				preview: Assets.PreviewLiyue,
+			},
+		},
+		{
+			position: 5000,
+			map: "Sumeru",
+			image: {
+				small: Assets.EmblemSumeru,
+				default: Assets.PreviewSumeru,
+				preview: [Assets.PreviewSumeru, Assets.PreviewSumeru2],
+			},
 		},
 		{
 			position: 9000,
 			map: "Inazuma",
-			largeImageKey: "preview_tenshukaku",
-			smallImageKey: "emblem_inazuma",
+			image: {
+				small: Assets.EmblemInazuma,
+				default: Assets.PreviewTenshukaku,
+				preview: Assets.PreviewTenshukaku,
+			},
 		},
 	];
 
-let getpos: number, current: Maps, currentCity: City;
+let oldMap: string,
+	current: Maps,
+	currentCity: City,
+	getPosition: number,
+	randomNumber: number;
 
 presence.on("UpdateData", async () => {
-	const [showPreview, timestamps] = await Promise.all([
-			presence.getSetting<boolean>("showPreview"),
+	const [timestamps, showPreview, randomPreview] = await Promise.all([
 			presence.getSetting<boolean>("timestamps"),
+			presence.getSetting<boolean>("showPreview"),
+			presence.getSetting<boolean>("randomPreview"),
 		]),
 		presenceData: PresenceData = {
 			details: "Genshin Impact Map",
-			largeImageKey: "main",
-			smallImageKey: "search",
+			largeImageKey: Assets.Logo,
+			smallImageKey: Assets.Search,
 			startTimestamp: browsingTimestamp,
 		},
-		{ hash, host, hostname, pathname, search } = document.location;
+		{ hash, host, hostname, pathname, search } = document.location,
+		searchParams = new URLSearchParams(search);
+
+	if (hostname === "mapgenie.io" && !pathname.includes("genshin-impact"))
+		return;
 	switch (hostname) {
 		case "genshin-impact-map.appsample.com":
-			current = map.find(i =>
-				i.map
-					.toLowerCase()
-					.includes(search?.split("?map=")[1].toLowerCase() || "teyvat")
+			current = map.find(
+				i =>
+					i.key?.includes(searchParams.get("map")?.toLowerCase()) ??
+					i.map
+						.toLowerCase()
+						.includes(searchParams.get("map")?.toLowerCase() || "teyvat")
 			);
 			break;
 		case "mapgenie.io":
-			if (pathname.split("/maps/")[1].toLowerCase() === "the-chasm-underground")
-				current = map.find(i => i.id === 9);
-			else {
-				current = map.find(i =>
+			current = map.find(
+				i =>
+					i.key?.includes(pathname?.split("/maps/")[1]?.toLowerCase()) ??
 					i.map
 						.toLowerCase()
-						.includes(pathname?.split("/maps/")[1].toLowerCase() || "teyvat")
-				);
-			}
+						.includes(pathname?.split("/maps/")[1]?.toLowerCase() || "teyvat")
+			);
 			break;
 		default: // Official Site
-			if (!hash.includes("&center=") && !hash.includes("&zoom=")) return;
-			getpos = parseInt(
-				hash.split("&center=")[1].split("&zoom=")[0].split(",")[0]
-			);
+			if (pathname.includes("signin-sea")) return;
 			current = map.find(
 				i => i.id === (parseInt(hash?.split("/map/")[1]?.split("?")[0]) || 2)
 			);
-			if (current?.city) currentCity = city.find(i => i.position > getpos);
+			getPosition = parseInt(new URLSearchParams(hash).get("center"));
+			if (current?.city)
+				currentCity = city.find(i => i.position >= getPosition);
 			else currentCity = null;
 			break;
 	}
 	if (!current) return;
+	if (oldMap !== (currentCity?.map ?? current.map)) {
+		oldMap = currentCity?.map ?? current.map;
+		randomNumber = Math.random();
+	}
+	if (
+		current.starting &&
+		current.ending &&
+		!(
+			current.starting < Date.now() / 1000 && current.ending > Date.now() / 1000
+		)
+	)
+		current = map[0];
+	else if (
+		(current.starting || current.ending) &&
+		!(
+			current.starting < Date.now() / 1000 || current.ending > Date.now() / 1000
+		)
+	)
+		current = map[0];
 	presenceData.details = current.map;
 	presenceData.state = current.city && currentCity ? currentCity.map : null;
-	presenceData.largeImageKey =
-		showPreview && currentCity
-			? currentCity.largeImageKey
-			: showPreview
-			? current.pvlargeImageKey
-			: current.largeImageKey;
-	presenceData.smallImageKey = current.city
-		? currentCity
-			? currentCity.smallImageKey
-			: current.smallImageKey
-		: current.smallImageKey;
+	presenceData.largeImageKey = getImage(
+		showPreview ? "preview" : "default",
+		randomPreview
+	);
+	presenceData.smallImageKey =
+		current.city && currentCity ? currentCity.image.small : current.image.small;
 	presenceData.smallImageText = host.replace(".com", "");
 	if (!timestamps) {
 		delete presenceData.startTimestamp;
@@ -141,3 +230,14 @@ presence.on("UpdateData", async () => {
 	if (presenceData.details) presence.setActivity(presenceData);
 	else presence.setActivity();
 });
+
+function getImage(type: "default" | "preview", random?: boolean) {
+	const currentImage = currentCity?.image ?? current.image;
+	return (
+		Array.isArray(currentImage[type]) && type === "preview"
+			? currentImage[type][
+					random ? Math.floor(randomNumber * currentImage[type].length) : 0
+			  ]
+			: currentImage[type] || current.image.default
+	) as string;
+}

@@ -2,9 +2,9 @@ const presence = new Presence({
 		clientId: "872656825890254849",
 	}),
 	strings = presence.getStrings({
-		play: "presence.playback.playing",
-		pause: "presence.playback.paused",
-		browsing: "presence.activity.browsing",
+		play: "general.playing",
+		pause: "general.paused",
+		browsing: "general.browsing",
 	});
 
 let video = {
@@ -42,7 +42,8 @@ presence.on("UpdateData", async () => {
 			presence.getSetting<boolean>("buttons"),
 		]),
 		presenceData: PresenceData = {
-			largeImageKey: "site",
+			largeImageKey:
+				"https://cdn.rcd.gg/PreMiD/websites/A/Anime-D/assets/logo.jpg",
 			startTimestamp: browsingTimestamp,
 		};
 
@@ -103,7 +104,7 @@ presence.on("UpdateData", async () => {
 			presenceData.details = info;
 			presenceData.state = episode;
 		}
-		presenceData.smallImageKey = video.paused ? "pause" : "playing";
+		presenceData.smallImageKey = video.paused ? Assets.Pause : Assets.Play;
 		presenceData.smallImageText = video.paused
 			? (await strings).pause
 			: (await strings).play;

@@ -10,7 +10,8 @@ presence.on("UpdateData", async () => {
 		path = document.location,
 		lang = path.pathname.substring(1, 6),
 		presenceData: PresenceData = {
-			largeImageKey: "index",
+			largeImageKey:
+				"https://cdn.rcd.gg/PreMiD/websites/T/TrueID/assets/logo.jpg",
 			startTimestamp: browsingTimestamp,
 		};
 
@@ -75,8 +76,8 @@ presence.on("UpdateData", async () => {
 					} ${selector}`;
 					break;
 				case path.pathname.includes("series"):
-					(ep = title.match(/\d+/g)),
-						(result = title.replace(`EP.${ep} | `, ""));
+					ep = title.match(/\d+/g);
+					result = title.replace(`EP.${ep} | `, "");
 					result_ = result.split("| ");
 					presenceData.details = `${lang === "th-th" ? "ซีรีส์" : "Series"} ${
 						ep
@@ -89,7 +90,7 @@ presence.on("UpdateData", async () => {
 							  }`
 							: ""
 					}`;
-					presenceData.state = `${result_[1] ? result_[1] : result}`;
+					presenceData.state = `${result_[1] ?? result}`;
 					if (buttons) {
 						presenceData.buttons = [
 							{
@@ -131,7 +132,7 @@ presence.on("UpdateData", async () => {
 						)?.textContent ??
 						"".replace("ดูช่อง ", "").replace("ออนไลน์", "").split("–")[0]
 					}`;
-					presenceData.smallImageKey = "live";
+					presenceData.smallImageKey = Assets.Live;
 					if (buttons) {
 						presenceData.buttons = [
 							{
@@ -149,7 +150,7 @@ presence.on("UpdateData", async () => {
 						lang === "th-th"
 							? "ผังรายการทีวีช่องทีวีทั้งหมด"
 							: "Program schedule of all channels";
-					presenceData.smallImageKey = "question";
+					presenceData.smallImageKey = Assets.Question;
 					break;
 				default:
 					presenceData.details = "Tv";

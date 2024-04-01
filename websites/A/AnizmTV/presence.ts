@@ -1,8 +1,8 @@
 const presence = new Presence({ clientId: "980817205480550410" }),
 	strings = presence.getStrings({
-		playing: "presence.playback.playing",
-		paused: "presence.playback.paused",
-		browsing: "presence.activity.browsing",
+		playing: "general.playing",
+		paused: "general.paused",
+		browsing: "general.browsing",
 		anime: "general.anime",
 	}),
 	browsingTimestamp = Math.floor(Date.now() / 1000);
@@ -16,7 +16,8 @@ presence.on("iFrameData", async (msg: HTMLVideoElement) => {
 
 presence.on("UpdateData", async () => {
 	const presenceData: PresenceData = {
-			largeImageKey: "anizm",
+			largeImageKey:
+				"https://cdn.rcd.gg/PreMiD/websites/A/AnizmTV/assets/logo.png",
 		},
 		title = document.querySelector(
 			"html > body > main > #pageContent > div > h2 > a"
@@ -127,7 +128,7 @@ presence.on("UpdateData", async () => {
 	}
 
 	if (video) {
-		presenceData.smallImageKey = video.paused ? "stop" : "resume";
+		presenceData.smallImageKey = video.paused ? Assets.Pause : Assets.Play;
 		presenceData.smallImageText = video.paused
 			? (await strings).paused
 			: (await strings).playing;

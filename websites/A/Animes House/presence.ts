@@ -44,7 +44,8 @@ presence.on("iFrameData", (data: IFrameData) => {
 
 presence.on("UpdateData", async () => {
 	const presenceData: PresenceData = {
-			largeImageKey: "logo",
+			largeImageKey:
+				"https://cdn.rcd.gg/PreMiD/websites/A/Animes%20House/assets/logo.png",
 			startTimestamp: browsingTimestamp,
 		},
 		path = document.location.pathname;
@@ -66,8 +67,8 @@ presence.on("UpdateData", async () => {
 	} else if (path.includes("episodio")) {
 		presenceData.details = nomeObraEpisodioText.textContent;
 		presenceData.state = episodioEpisodioText.textContent;
-		presenceData.smallImageKey = "";
-		presenceData.smallImageText = "";
+		delete presenceData.smallImageKey;
+		delete presenceData.smallImageText;
 		if (played) {
 			!paused
 				? ((timestamps = presence.getTimestamps(
@@ -76,9 +77,9 @@ presence.on("UpdateData", async () => {
 				  )),
 				  ([presenceData.startTimestamp, presenceData.endTimestamp] =
 						timestamps),
-				  (presenceData.smallImageKey = "play"),
+				  (presenceData.smallImageKey = Assets.Play),
 				  (presenceData.smallImageText = "Assistindo"))
-				: ((presenceData.smallImageKey = "pause"),
+				: ((presenceData.smallImageKey = Assets.Pause),
 				  (presenceData.smallImageText = "Pausado"));
 		}
 	} else if (path.includes("filme")) {
@@ -96,9 +97,9 @@ presence.on("UpdateData", async () => {
 					  )),
 					  ([presenceData.startTimestamp, presenceData.endTimestamp] =
 							timestamps),
-					  (presenceData.smallImageKey = "play"),
+					  (presenceData.smallImageKey = Assets.Play),
 					  (presenceData.smallImageText = "Assistindo"))
-					: ((presenceData.smallImageKey = "pause"),
+					: ((presenceData.smallImageKey = Assets.Pause),
 					  (presenceData.smallImageText = "Pausado"));
 			}
 		}

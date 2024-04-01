@@ -5,17 +5,25 @@ const presence = new Presence({
 		clientId: "853718947412967474",
 	}),
 	strings = presence.getStrings({
-		play: "presence.playback.playing",
-		pause: "presence.playback.paused",
+		play: "general.playing",
+		pause: "general.paused",
 		browsing: "general.browsing",
 		browsingThrough: "discord.browseThrough",
 		buttonWatchVideo: "general.buttonWatchVideo",
 		buttonWatchStream: "general.buttonWatchStream",
 	});
 
+const enum Assets {
+	Logo = "https://cdn.rcd.gg/PreMiD/websites/A/ARD%20Mediathek/assets/logo.png",
+	ThreeSat = "https://cdn.rcd.gg/PreMiD/websites/A/ARD%20Mediathek/assets/0.png",
+	Deutschewelle = "https://cdn.rcd.gg/PreMiD/websites/A/ARD%20Mediathek/assets/1.png",
+	Kika = "https://cdn.rcd.gg/PreMiD/websites/A/ARD%20Mediathek/assets/2.png",
+	ArdMediathek = "https://cdn.rcd.gg/PreMiD/websites/A/ARD%20Mediathek/assets/3.png",
+}
+
 presence.on("UpdateData", async () => {
 	const presenceData: PresenceData = {
-			largeImageKey: "ard_mediathek",
+			largeImageKey: Assets.Logo,
 		},
 		path = location.pathname.replace(/\/?$/, "/");
 
@@ -46,13 +54,13 @@ presence.on("UpdateData", async () => {
 					.querySelector(".src__Box-sc-1sbtrzs-0.Column-wbrv0h-1.llCdnS.hkXjQv")
 					.children[0].children[0].getAttribute("src");
 				if (channelLinkIMG === "/images/KdbelgIm.svg")
-					presenceData.largeImageKey = "3sat";
+					presenceData.largeImageKey = Assets.ThreeSat;
 				else if (channelLinkIMG === "/images/siBNbNWW.svg")
-					presenceData.largeImageKey = "deutschewelle";
-				else presenceData.largeImageKey = "kika";
+					presenceData.largeImageKey = Assets.Deutschewelle;
+				else presenceData.largeImageKey = Assets.Kika;
 			}
 
-			presenceData.smallImageKey = "live";
+			presenceData.smallImageKey = Assets.Live;
 			presenceData.smallImageText = "Live";
 			presenceData.details = `${document.title
 				.replace(/Livestream \| ARD-Mediathek/, "")
@@ -64,8 +72,8 @@ presence.on("UpdateData", async () => {
 			];
 		} else if (path.startsWith("/video/")) {
 			// Video-on-demand
-			presenceData.largeImageKey = "ard_mediathek";
-			presenceData.smallImageKey = "play";
+			presenceData.largeImageKey = Assets.ArdMediathek;
+			presenceData.smallImageKey = Assets.Play;
 			presenceData.smallImageText = (await strings).play;
 			presenceData.details = videoTitle;
 
@@ -88,13 +96,13 @@ presence.on("UpdateData", async () => {
 
 		// Player paused ?
 		if (video.paused) {
-			presenceData.smallImageKey = "pause";
+			presenceData.smallImageKey = Assets.Pause;
 			presenceData.smallImageText = (await strings).pause;
 			delete presenceData.startTimestamp;
 			delete presenceData.endTimestamp;
 		}
 	} else {
-		presenceData.smallImageKey = "reading";
+		presenceData.smallImageKey = Assets.Reading;
 		presenceData.smallImageText = (await strings).browsingThrough;
 		presenceData.details = (await strings).browsing;
 		presenceData.startTimestamp = elapsed;

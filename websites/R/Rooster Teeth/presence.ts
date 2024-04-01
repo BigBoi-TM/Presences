@@ -7,7 +7,8 @@ presence.on("UpdateData", () => {
 	let video: HTMLVideoElement, live;
 	const path = window.location.pathname,
 		presenceData: PresenceData = {
-			largeImageKey: "roosterteeth",
+			largeImageKey:
+				"https://cdn.rcd.gg/PreMiD/websites/R/Rooster%20Teeth/assets/logo.png",
 			details: "Browsing Rooster Teeth",
 			startTimestamp: elapsed,
 		};
@@ -114,12 +115,12 @@ presence.on("UpdateData", () => {
 	}
 	if (video) {
 		if (live) {
-			presenceData.smallImageKey = video.paused ? "livepause" : "live";
+			presenceData.smallImageKey = video.paused ? Assets.Pause : Assets.Live;
 			presenceData.smallImageText = video.paused
 				? "Live Playback paused"
 				: "Live";
 		} else {
-			presenceData.smallImageKey = video.paused ? "pause" : "play";
+			presenceData.smallImageKey = video.paused ? Assets.Pause : Assets.Play;
 			presenceData.smallImageText = video.paused
 				? "Playback paused"
 				: "Playing back";

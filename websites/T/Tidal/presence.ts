@@ -1,6 +1,5 @@
-const presence = new Presence({
-	clientId: "901591802342150174",
-});
+const LOGO_URL = "https://cdn.rcd.gg/PreMiD/websites/T/Tidal/assets/logo.png",
+	presence = new Presence({ clientId: "901591802342150174" });
 
 async function getStrings() {
 	return presence.getStrings(
@@ -18,7 +17,7 @@ let strings: Awaited<ReturnType<typeof getStrings>>,
 
 presence.on("UpdateData", async () => {
 	if (!document.querySelector("#footerPlayer"))
-		return presence.setActivity({ largeImageKey: "logo" });
+		return presence.setActivity({ largeImageKey: LOGO_URL });
 
 	const [newLang, timestamps, cover, buttons] = await Promise.all([
 		presence.getSetting<string>("lang").catch(() => "en"),
@@ -32,10 +31,10 @@ presence.on("UpdateData", async () => {
 		strings = await getStrings();
 	}
 	const presenceData: PresenceData = {
-			largeImageKey: "logo",
+			largeImageKey: LOGO_URL,
 		},
 		songTitle = document.querySelector<HTMLAnchorElement>(
-			'div[data-test="footer-track-title"] > a'
+			"[data-test='footer-track-title'] > div > a"
 		),
 		currentTime = document
 			.querySelector<HTMLElement>('time[data-test="current-time"]')
@@ -53,26 +52,30 @@ presence.on("UpdateData", async () => {
 			.querySelector(
 				'div[data-test="play-controls"] > button[data-test="repeat"]'
 			)
-			.getAttribute("aria-label");
+			.getAttribute("data-type");
 
 	presenceData.details = songTitle.textContent;
-	presenceData.state = document.querySelector(
-		'div[data-test="left-column-footer-player"] > div:nth-child(2) > div:nth-child(2) > span > span > span'
-	).textContent;
+	// get artists
+	presenceData.state = Array.from(
+		document.querySelectorAll<HTMLAnchorElement>("#footerPlayer .artist-link a")
+	)
+		.map(artist => artist.textContent)
+		.join(", ");
 
 	if (cover) {
-		presenceData.largeImageKey =
-			navigator.mediaSession.metadata.artwork[0].src.replace(
-				"160x160",
-				"640x640"
-			);
+		presenceData.largeImageKey = document
+			.querySelector(
+				"figure[data-test=current-media-imagery] > div > div > div > img"
+			)
+			.getAttribute("src")
+			.replace("80x80", "640x640");
 	}
 	if (currentTimeSec > 0 || !paused) {
 		presenceData.endTimestamp =
 			Date.now() +
 			((parseFloat(endTime[0]) * 60 + parseFloat(endTime[1]) + 1) * 1000 -
 				currentTimeSec);
-		presenceData.smallImageKey = paused ? "pause" : "play";
+		presenceData.smallImageKey = paused ? Assets.Pause : Assets.Play;
 		presenceData.smallImageText = paused
 			? (await strings).pause
 			: (await strings).play;
@@ -86,9 +89,9 @@ presence.on("UpdateData", async () => {
 			.getAttribute("aria-checked") === "true"
 	) {
 		presenceData.smallImageKey =
-			repeatType === "Repeat" ? "repeat" : "repeat-one";
+			repeatType === "button__repeatAll" ? Assets.Repeat : Assets.RepeatOne;
 		presenceData.smallImageText =
-			repeatType === "Repeat" ? "Playlist on loop" : "On loop";
+			repeatType === "button__repeatAll" ? "Playlist on loop" : "On loop";
 
 		delete presenceData.endTimestamp;
 	}

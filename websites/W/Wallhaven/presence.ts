@@ -143,16 +143,17 @@ const pages: PageContext[] = [
 
 presence.on("UpdateData", async () => {
 	const presenceData: PresenceData = {
-		largeImageKey: "logo",
+		largeImageKey:
+			"https://cdn.rcd.gg/PreMiD/websites/W/Wallhaven/assets/logo.png",
 	};
 	if (document.location.hostname === "wallhaven.cc") {
 		const query: { [key: string]: unknown } = getQuery(),
 			strings: { [key: string]: string } = await presence.getStrings({
-				play: "presence.playback.playing",
-				pause: "presence.playback.paused",
-				browsing: "presence.activity.browsing",
-				searching: "presence.activity.searching",
-				reading: "presence.activity.reading",
+				play: "general.playing",
+				pause: "general.paused",
+				browsing: "general.browsing",
+				searching: "general.searching",
+				reading: "general.reading",
 			}),
 			context = pages.find(x => x.middleware(window, [query]));
 		if (!context) return;

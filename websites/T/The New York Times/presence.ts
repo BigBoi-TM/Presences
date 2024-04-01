@@ -9,7 +9,8 @@ presence.on("UpdateData", async () => {
 		{ pathname, hostname, href, search } = window.location,
 		path = pathname.split("/"),
 		presenceData: PresenceData = {
-			largeImageKey: "logo",
+			largeImageKey:
+				"https://cdn.rcd.gg/PreMiD/websites/T/The%20New%20York%20Times/assets/logo.jpg",
 			startTimestamp: time,
 		};
 
@@ -151,7 +152,7 @@ presence.on("UpdateData", async () => {
 			}
 
 			if (isLive) {
-				presenceData.smallImageKey = "live";
+				presenceData.smallImageKey = Assets.Live;
 				presenceData.smallImageText = "Live";
 			} else if (setting.articleAuthor && !setting.privacy && author) {
 				presenceData.smallImageKey = await getShortURL(author.src);

@@ -2,8 +2,8 @@ const presence = new Presence({
 		clientId: "865625724911616050",
 	}),
 	strings = presence.getStrings({
-		play: "presence.playback.playing",
-		pause: "presence.playback.paused",
+		play: "general.playing",
+		pause: "general.paused",
 	}),
 	video = {
 		isPlayerPlaying: false,
@@ -28,7 +28,8 @@ presence.on(
 
 presence.on("UpdateData", async () => {
 	const presenceData: PresenceData = {
-		largeImageKey: "logo",
+		largeImageKey:
+			"https://cdn.rcd.gg/PreMiD/websites/M/megastudy/assets/logo.png",
 	};
 
 	if (document.location.pathname.includes("Player")) {
@@ -50,11 +51,11 @@ presence.on("UpdateData", async () => {
 				video.currentTime,
 				video.duration
 			);
-			presenceData.smallImageKey = "play";
+			presenceData.smallImageKey = Assets.Play;
 			presenceData.smallImageText = (await strings).play;
 		} else {
 			delete presenceData.endTimestamp;
-			presenceData.smallImageKey = "pause";
+			presenceData.smallImageKey = Assets.Pause;
 			presenceData.smallImageText = (await strings).pause;
 		}
 	} else {

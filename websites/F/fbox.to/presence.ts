@@ -3,6 +3,10 @@ const presence = new Presence({
 	}),
 	browsingTimestamp = Math.floor(Date.now() / 1000);
 
+const enum Assets {
+	Logo = "https://cdn.rcd.gg/PreMiD/websites/F/fbox.to/assets/logo.png",
+}
+
 let iFrameData: {
 	currTime: number;
 	duration: number;
@@ -15,19 +19,24 @@ presence.on(
 		iFrameData = data;
 	}
 );
-
 presence.on("UpdateData", async () => {
 	const presenceData: PresenceData = {
 			startTimestamp: browsingTimestamp,
-			largeImageKey: "fbox_logo",
+			largeImageKey: Assets.Logo,
 		},
 		{ pathname, href } = document.location,
 		[buttons, image] = await Promise.all([
 			presence.getSetting<boolean>("buttons"),
 			presence.getSetting<boolean>("image"),
-		]);
+		]),
+		search = document.querySelector<HTMLInputElement>('[type="text"]');
 
-	if (pathname === "/home") presenceData.details = "Browsing";
+	if (search?.value) {
+		presenceData.details = "Searching for:";
+		presenceData.state = search.value;
+		presenceData.smallImageKey = Assets.Search;
+	} else if (pathname === "/home" || pathname === "/")
+		presenceData.details = "Browsing";
 	else if (pathname.startsWith("/series/")) {
 		const title = document.querySelector<HTMLHeadingElement>(
 				"#watch > div.container > div.watch-extra > div.bl-1 > section.info > div.info > h1"
@@ -40,17 +49,22 @@ presence.on("UpdateData", async () => {
 			if (episode) presenceData.state += ` - ${episode.textContent.trim()}`;
 		}
 		if (image) {
-			presenceData.largeImageKey = document
-				.querySelector("meta[property='og:image']")
-				.getAttribute("content");
+			presenceData.largeImageKey =
+				document
+					.querySelector("meta[property='og:image']")
+					?.getAttribute("content") ??
+				document
+					.querySelector('[class="poster"] > [itemprop="image"]')
+					?.getAttribute("src") ??
+				Assets.Logo;
 		}
 		if (iFrameData && !iFrameData.paused) {
 			[, presenceData.endTimestamp] = presence.getTimestamps(
 				iFrameData.currTime,
 				iFrameData.duration
 			);
-			presenceData.smallImageKey = "play";
-		} else presenceData.smallImageKey = "pause";
+			presenceData.smallImageKey = Assets.Play;
+		} else presenceData.smallImageKey = Assets.Pause;
 		if (buttons) {
 			presenceData.buttons = [
 				{
@@ -65,17 +79,22 @@ presence.on("UpdateData", async () => {
 		);
 		if (title) presenceData.details = title.textContent;
 		if (image) {
-			presenceData.largeImageKey = document
-				.querySelector("meta[property='og:image']")
-				.getAttribute("content");
+			presenceData.largeImageKey =
+				document
+					.querySelector("meta[property='og:image']")
+					?.getAttribute("content") ??
+				document
+					.querySelector('[class="poster"] > [itemprop="image"]')
+					?.getAttribute("src") ??
+				Assets.Logo;
 		}
 		if (iFrameData && !iFrameData.paused) {
 			[, presenceData.endTimestamp] = presence.getTimestamps(
 				iFrameData.currTime,
 				iFrameData.duration
 			);
-			presenceData.smallImageKey = "play";
-		} else presenceData.smallImageKey = "pause";
+			presenceData.smallImageKey = Assets.Play;
+		} else presenceData.smallImageKey = Assets.Pause;
 		if (buttons) {
 			presenceData.buttons = [
 				{
@@ -92,7 +111,7 @@ presence.on("UpdateData", async () => {
 		const genre = document.querySelector<HTMLHeadingElement>("section.bl h1");
 		if (genre) {
 			presenceData.details = genre.textContent;
-			presenceData.smallImageKey = "search";
+			presenceData.smallImageKey = Assets.Search;
 		}
 	}
 

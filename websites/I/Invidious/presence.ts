@@ -14,8 +14,10 @@ function getTime() {
 
 presence.on("UpdateData", async () => {
 	const presenceData: PresenceData = {
-		largeImageKey: "icon",
-		smallImageKey: "more",
+		largeImageKey:
+			"https://cdn.rcd.gg/PreMiD/websites/I/Invidious/assets/logo.png",
+		smallImageKey:
+			"https://cdn.rcd.gg/PreMiD/websites/I/Invidious/assets/0.png",
 	};
 	let clear = false;
 
@@ -55,8 +57,8 @@ presence.on("UpdateData", async () => {
 
 		case "watch":
 			presenceData.smallImageKey = document.querySelectorAll(".vjs-playing")[0]
-				? "play"
-				: "pause";
+				? Assets.Play
+				: Assets.Pause;
 			presenceData.details = document
 				.querySelectorAll("h1")[0]
 				.textContent.trim();

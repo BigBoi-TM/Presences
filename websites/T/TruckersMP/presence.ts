@@ -5,7 +5,8 @@ const presence = new Presence({
 
 presence.on("UpdateData", async () => {
 	let presenceData: PresenceData = {
-		largeImageKey: "logo",
+		largeImageKey:
+			"https://cdn.rcd.gg/PreMiD/websites/T/TruckersMP/assets/logo.png",
 	};
 	const [buttons, timestamp, privacy] = await Promise.all([
 			presence.getSetting<boolean>("buttons"),
@@ -24,7 +25,7 @@ presence.on("UpdateData", async () => {
 			"/vtc/search": { details: "Searching for a VTC" },
 			"/vtc/create": { details: "Creating a VTC" },
 			"/blog": { details: "Browsing the blog" },
-			"/events": { details: "Viewing the events centre" },
+			"/events": { details: "Viewing the events system" },
 			"/events/manage": { details: "Managing their events" },
 			"/events/manage/past": { details: "Viewing their past events" },
 			"/events/create": { details: "Creating an event" },
@@ -81,7 +82,7 @@ presence.on("UpdateData", async () => {
 					presenceData.buttons = [{ label: "Read Article", url: document.URL }];
 					break;
 				case document.location.pathname === "/":
-					presenceData.details = "Browsing the website";
+					presenceData.details = "Browsing the homepage";
 			}
 			break;
 		case "forum.truckersmp.com":
@@ -103,7 +104,7 @@ presence.on("UpdateData", async () => {
 					presenceData.buttons = [{ label: "View Topic", url: document.URL }];
 					break;
 				case document.location.pathname.includes("/forum"):
-					presenceData.details = "Browing the forum";
+					presenceData.details = "Browsing the forum";
 					presenceData.state =
 						document.querySelector<HTMLHeadingElement>(
 							"header > h1"

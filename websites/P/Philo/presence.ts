@@ -2,16 +2,17 @@ const presence = new Presence({
 		clientId: "770395849041248306",
 	}),
 	strings = presence.getStrings({
-		play: "presence.playback.playing",
-		pause: "presence.playback.paused",
-		live: "presence.activity.live",
+		play: "general.playing",
+		pause: "general.paused",
+		live: "general.live",
 	});
 
 let elapsed: number, oldUrl: string;
 
 presence.on("UpdateData", async () => {
 	const presenceData: PresenceData = {
-			largeImageKey: "philo",
+			largeImageKey:
+				"https://cdn.rcd.gg/PreMiD/websites/P/Philo/assets/logo.png",
 		},
 		{ href, pathname: path } = window.location;
 
@@ -45,10 +46,10 @@ presence.on("UpdateData", async () => {
 		)?.textContent),
 			(presenceData.state = state);
 		presenceData.smallImageKey = live
-			? "live"
+			? Assets.Live
 			: video.paused
-			? "pause"
-			: "play";
+			? Assets.Pause
+			: Assets.Play;
 		presenceData.smallImageText = live
 			? (await strings).live
 			: video.paused

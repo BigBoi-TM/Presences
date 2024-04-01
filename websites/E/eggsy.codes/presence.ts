@@ -5,38 +5,36 @@ const presence = new Presence({
 presence.on("UpdateData", async () => {
 	if (document.location.pathname !== "/projects/premid/custom-status") {
 		const details = document.querySelector("[name~=premid-details][content]")
-				? (
-						document.querySelector(
-							"[name~=premid-details][content]"
-						) as HTMLMetaElement
+				? document.querySelector<HTMLMetaElement>(
+						"[name~=premid-details][content]"
 				  ).content
 				: null,
 			state = document.querySelector("[name~=premid-state][content]")
-				? (
-						document.querySelector(
-							"[name~=premid-state][content]"
-						) as HTMLMetaElement
+				? document.querySelector<HTMLMetaElement>(
+						"[name~=premid-state][content]"
 				  ).content
 				: null,
 			smallImage = document.querySelector("[name~=premid-smallImage][content]")
-				? (
-						document.querySelector(
-							"[name~=premid-smallImage][content]"
-						) as HTMLMetaElement
+				? document.querySelector<HTMLMetaElement>(
+						"[name~=premid-smallImage][content]"
 				  ).content
 				: null;
 
 		if (state && details) {
 			presence.setActivity({
-				largeImageKey: "ec-logo",
+				largeImageKey:
+					"https://cdn.rcd.gg/PreMiD/websites/E/eggsy.codes/assets/logo.png",
 				details,
 				state,
-				smallImageKey: smallImage ? smallImage : "SOMETHING-SKETCHY",
+				smallImageKey:
+					smallImage ??
+					"https://cdn.rcd.gg/PreMiD/websites/E/eggsy.codes/assets/logo.png",
 				startTimestamp: Math.floor(Date.now() / 1000),
 			});
 		} else {
 			presence.setActivity({
-				largeImageKey: "ec-logo",
+				largeImageKey:
+					"https://cdn.rcd.gg/PreMiD/websites/E/eggsy.codes/assets/logo.png",
 				details: "Viewing a page:",
 				state: "Homepage",
 				startTimestamp: Math.floor(Date.now() / 1000),

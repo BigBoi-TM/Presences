@@ -12,6 +12,9 @@ const presence = new Presence({
 		if (element) return element.textContent.replace(/^\s+|\s+$/g, "");
 		else return "Loading...";
 	};
+const enum Assets {
+	Logo = "https://cdn.rcd.gg/PreMiD/websites/A/Anontpp/assets/logo.png",
+}
 
 let oldUrl: string, elapsed: number, strings: Awaited<typeof newStrings>;
 
@@ -25,7 +28,7 @@ presence.on("UpdateData", async () => {
 			presence.getSetting<boolean>("cover"),
 		]),
 		presenceData: PresenceData = {
-			largeImageKey: "anontpp",
+			largeImageKey: Assets.Logo,
 		};
 
 	if (oldUrl !== path) {
@@ -44,7 +47,7 @@ presence.on("UpdateData", async () => {
 			).flatMap(node => node.textContent.trim() || []),
 			status = video.paused ? "pause" : "play";
 
-		presenceData.smallImageKey = status;
+		presenceData.smallImageKey = video.paused ? Assets.Pause : Assets.Play;
 		presenceData.smallImageText = strings[status];
 		if (status === "play") {
 			[presenceData.startTimestamp, presenceData.endTimestamp] =
@@ -73,13 +76,13 @@ presence.on("UpdateData", async () => {
 			document.querySelector<HTMLInputElement>("input").value;
 	}
 
-	if (presenceData.details) {
+	if (presenceData.details && typeof presenceData.details === "string") {
 		if (presenceData.details.match("(Browsing|Viewing)")) {
-			presenceData.smallImageKey = "reading";
+			presenceData.smallImageKey = Assets.Reading;
 			presenceData.smallImageText = strings.browse;
 		}
 		if (presenceData.details.includes("Searching")) {
-			presenceData.smallImageKey = "search";
+			presenceData.smallImageKey = Assets.Search;
 			presenceData.smallImageText = strings.search;
 		}
 
